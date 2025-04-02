@@ -17,12 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // Define middleware aliases for Sanctum's token ability checks.
         // This allows us to verify that an incoming request is authenticated
         // with a token that has been granted specific abilities.
-        $middleware->alias([
-            'abilities' => CheckAbilities::class,
-            'ability' => CheckForAnyAbility::class,
-        ]);
+        // $middleware->alias([
+        //     'abilities' => CheckAbilities::class,
+        //     'ability' => CheckForAnyAbility::class,
+        // ]);
 
-        // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class;
+        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class;
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
