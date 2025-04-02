@@ -34,12 +34,14 @@ class TodoController extends Controller
         // Validate the incoming request to ensure email and password are provided
         $request->validate([
             'title' => 'required|string',
-            'completed' => 'nullable|in:0,1'
+            'completed' => 'nullable|boolean',
+            'reminder_at' => 'nullable|date'
         ]);
 
         $todo = Todo::create([
             'title' => $request->title,
-            'completed' => $request->completed ?? 0,
+            'completed' => $request->completed ?? false,
+            'reminder_at' => $request->reminder_at,
             'user_id' => Auth::id()
         ]);
 
@@ -71,13 +73,15 @@ class TodoController extends Controller
         // Validate incoming request to allow both 'title' and 'completed' to be updated
         $request->validate([
             'title' => 'nullable|string',
-            'completed' => 'nullable|in:0,1'
+            'completed' => 'nullable|boolean',
+            'reminder_at' => 'nullable|date'
         ]);
 
         // Only update the fields that are provided in the request
         $todo->update([
             'title' => $request->title ?? $todo->title,
-            'completed' => $request->completed ?? $todo->completed,
+            'completed' => $request->has('completed') ? $request->completed : $todo->completed,
+            'reminder_at' => $request->has('reminder_at') ? $request->reminder_at : $todo->reminder_at,
         ]);
 
         return response()->json($todo, 200);
