@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class;
     })
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        $schedule->command('reminders:send')->everyMinute();
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

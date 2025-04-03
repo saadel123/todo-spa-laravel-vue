@@ -22,5 +22,10 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password' => Hash::make('password'),// For testing purposes, this password is kept simple
         ]);
+        User::factory()->create([
+            'name' => 'Second User',
+            'email' => 'second@example.com',
+            'password' => Hash::make('password'),
+        ]);
     }
 }

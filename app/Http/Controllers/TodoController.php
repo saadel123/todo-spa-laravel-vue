@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,9 @@ class TodoController extends Controller
     public function index(): JsonResponse
     {
         // Retrieve all todos that belong to the authenticated user
-        $todos = Todo::where('user_id', Auth::id())->get();
+        $todos = Todo::where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
         return response()->json($todos, 200);
     }
@@ -38,10 +41,17 @@ class TodoController extends Controller
             'reminder_at' => 'nullable|date'
         ]);
 
+        // Parse and format the reminder date if provided
+        $reminderAt = null;
+        if ($request->reminder_at) {
+            // Convert the reminder_at string to a standardized datetime format
+            // using Carbon for consistent database storage
+            $reminderAt = Carbon::parse($request->reminder_at)->format('Y-m-d H:i:s');
+        }
         $todo = Todo::create([
             'title' => $request->title,
             'completed' => $request->completed ?? false,
-            'reminder_at' => $request->reminder_at,
+            'reminder_at' => $reminderAt,
             'user_id' => Auth::id()
         ]);
 
@@ -70,18 +80,14 @@ class TodoController extends Controller
         // Using policy to check if the user can update the todo
         $this->authorize('update', $todo);
 
-        // Validate incoming request to allow both 'title' and 'completed' to be updated
+        // Validate only the completed status
         $request->validate([
-            'title' => 'nullable|string',
             'completed' => 'nullable|boolean',
-            'reminder_at' => 'nullable|date'
         ]);
 
         // Only update the fields that are provided in the request
         $todo->update([
-            'title' => $request->title ?? $todo->title,
             'completed' => $request->has('completed') ? $request->completed : $todo->completed,
-            'reminder_at' => $request->has('reminder_at') ? $request->reminder_at : $todo->reminder_at,
         ]);
 
         return response()->json($todo, 200);

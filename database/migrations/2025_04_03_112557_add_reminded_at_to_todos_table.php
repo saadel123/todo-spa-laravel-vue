@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('todos', function (Blueprint $table) {
-            $table->timestamp('reminder_at')->nullable()->after('completed');
+            //
+            $table->timestamp('reminded_at')->nullable()->after('reminder_at');
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('todos', function (Blueprint $table) {
-            $table->dropColumn('completed');
+            //
+            $table->dropColumn('reminded_at');
         });
     }
 };

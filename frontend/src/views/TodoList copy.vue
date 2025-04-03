@@ -7,19 +7,19 @@ interface Todo {
     id: number;
     title: string;
     completed: boolean;
-    reminder_at?: string | null;
-    reminded_at?: string | null;
+    reminder_at?: string | null;  // Optional reminder timestamp
+    reminded_at?: string | null;  // Timestamp when reminder was sent
 }
 
-// Reactive state
-const todos = ref<Todo[]>([]);
-const newTodo = ref('');
-const reminderDate = ref<string | null>(null);
-const reminderTime = ref<string | null>(null);
-const isLoading = ref(false);
-const isAdding = ref(false);
-const updatingIds = ref<number[]>([]);
-const showDatePicker = ref(false);
+// Reactive state for our todo application
+const todos = ref<Todo[]>([]);  // List of todos
+const newTodo = ref('');  // Current new todo input
+const reminderDate = ref<string | null>(null);  // Selected reminder date
+const reminderTime = ref<string | null>(null);  // Selected reminder time
+const isLoading = ref(false);  // Loading state for initial fetch
+const isAdding = ref(false);  // Loading state for adding todos
+const updatingIds = ref<number[]>([]);  // Track which todos are being updated
+const showDatePicker = ref(false);  // Control date picker visibility
 
 // Fetch todos from the API and update state
 const fetchTodos = async () => {
@@ -108,11 +108,17 @@ const getReminderStatus = (todo: Todo) => {
     return 'Due: ' + formatReminder(todo.reminder_at);  // Pending reminder
 };
 
+// Fetch todos when component mounts
 onMounted(fetchTodos);
 </script>
 
 <template>
     <v-container class="max-width-md">
+        <!-- Loading overlay for initial data fetch -->
+        <v-overlay :model-value="isLoading && todos.length === 0" class="align-center justify-center" persistent>
+            <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
+        </v-overlay>
+
         <!-- Main todo card with input form -->
         <v-card class="pa-4 mb-4" elevation="4">
             <v-card-title class="text-h4 font-weight-bold text-center mb-4">
@@ -169,7 +175,7 @@ onMounted(fetchTodos);
 
             <!-- Loading skeleton for initial load -->
             <template v-if="isLoading && todos.length === 0">
-                <v-skeleton-loader v-for="n in 4" :key="n" type="list-item-avatar-two-line"
+                <v-skeleton-loader v-for="n in 3" :key="n" type="list-item-avatar-two-line"
                     class="pa-4"></v-skeleton-loader>
             </template>
 
@@ -225,14 +231,17 @@ onMounted(fetchTodos);
 </template>
 
 <style scoped>
+/* Responsive container */
 .max-width-md {
     max-width: 800px;
 }
 
+/* Style for completed reminder chips */
 .text-strike-through {
     text-decoration: line-through;
 }
 
+/* Spacing for chips and buttons */
 .v-chip {
     margin-right: 4px;
 }
