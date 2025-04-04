@@ -13,11 +13,18 @@ class TodoPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine if the given user can create a todo.
-     *
-     * @param  \App\Models\User  $user
-     * @return bool
+     * Determine if the given user can view the todo.
      */
+    public function view(User $user, Todo $todo): bool
+    {
+        // Only the user who owns the todo can view it
+        return $user->id === $todo->user_id;
+    }
+
+    /**
+     * Determine if the given user can create a todo.
+     */
+
     public function create(User $user)
     {
         // Any authenticated user can create a Todo
@@ -26,10 +33,6 @@ class TodoPolicy
 
     /**
      * Determine if the given user can update the todo.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Todo  $todo
-     * @return bool
      */
     public function update(User $user, Todo $todo)
     {
@@ -39,10 +42,6 @@ class TodoPolicy
 
     /**
      * Determine if the given user can delete the todo.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Todo  $todo
-     * @return bool
      */
     public function delete(User $user, Todo $todo)
     {

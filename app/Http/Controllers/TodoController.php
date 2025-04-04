@@ -19,14 +19,25 @@ class TodoController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // Fields to always include in responses
+    private const API_FIELDS = [
+        'id',
+        'title',
+        'completed',
+        'reminder_at',
+        'reminded_at'
+    ];
+
     public function index(): JsonResponse
     {
         // Retrieve all todos that belong to the authenticated user
         $todos = Todo::where('user_id', Auth::id())
             ->latest()
-            ->get();
+            ->get(self::API_FIELDS);
 
-        return response()->json($todos, 200);
+        return response()->json([
+            'data' => $todos,
+        ], 200);
     }
 
     /**
@@ -36,7 +47,7 @@ class TodoController extends Controller
     {
         // Validate the incoming request to ensure email and password are provided
         $request->validate([
-            'title' => 'required|string',
+            'title' => 'required|string|max:250',
             'completed' => 'nullable|boolean',
             'reminder_at' => 'nullable|date'
         ]);
@@ -55,21 +66,22 @@ class TodoController extends Controller
             'user_id' => Auth::id()
         ]);
 
-        return response()->json($todo, 201);
+        return response()->json([
+            'data' => $todo->only(self::API_FIELDS),
+            'message' => 'Todo created successfully'
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): JsonResponse
+    public function show(Todo $todo): JsonResponse
     {
-        $todo = Todo::find($id);
+        $this->authorize('view', $todo);
 
-        if (!$todo || $todo->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        return response()->json($todo, 200);
+        return response()->json([
+            'data' => $todo->only(self::API_FIELDS)
+        ]);
     }
 
     /**
@@ -90,7 +102,11 @@ class TodoController extends Controller
             'completed' => $request->has('completed') ? $request->completed : $todo->completed,
         ]);
 
-        return response()->json($todo, 200);
+        return response()->json([
+            'id' => $todo->id,
+            'completed' => $todo->completed,
+            'message' => 'Status updated successfully'
+        ], 200);
     }
 
 
