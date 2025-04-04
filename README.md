@@ -1,6 +1,6 @@
 # Laravel ToDo SPA with Reminders
 
-![Project Banner](https://raw.githubusercontent.com/saadel123/test-repo/refs/heads/main/testraw/SPA-LARAVEL-VUE-VUETIFY.gif?token=GHSAT0AAAAAAC4R5SWTXGVFEPO7OASZ4GGSZ7QAWDQ)
+![Project Banner](https://raw.githubusercontent.com/saadel123/todo-spa-laravel-vue/refs/heads/main/public/SPA-LARAVEL-VUE-VUETIFY.gif)
 
 A To-Do Single Page Application with email reminders, built with:
 - **Backend**: Laravel 12 + Rest API + Sanctum
