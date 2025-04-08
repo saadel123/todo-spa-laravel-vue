@@ -30,7 +30,7 @@ A To-Do Single Page Application with email reminders, built with:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/todo-spa.git
+git clone https://github.com/saadel123/todo-spa-laravel-vue.git
 cd todo-spa
 ```
 
